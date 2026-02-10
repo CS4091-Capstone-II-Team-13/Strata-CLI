@@ -16,7 +16,7 @@ const string APP_NAME = "STRATA";
 
 int main(int argc, char *argv[]){
 
-    cout << "Strata Is Working !" << endl;
+    cout << "New Version of Strata 1.0.3" << endl;
 
     return 1;
 }
