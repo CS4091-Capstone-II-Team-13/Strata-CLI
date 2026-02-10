@@ -10,13 +10,14 @@
 #include <iostream>
 #include <string>
 
-using namespace std;
+#include "command.hpp"
+#include "flags.hpp"
 
-const string APP_NAME = "STRATA";
+using namespace std;
 
 int main(int argc, char *argv[]){
 
-    cout << "New Version of Strata 1.0.3" << endl;
+    
 
     return 1;
 }
