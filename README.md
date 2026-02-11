@@ -17,3 +17,8 @@ _Use strata to store large file formats natively_
 
 
 ## Installation
+
+Build CLI binary by simply running `make` or `make build`
+To install the binary on a linux system run `make install`
+
+Otherwise, you can just run the binary in bins natively on your system through the command line

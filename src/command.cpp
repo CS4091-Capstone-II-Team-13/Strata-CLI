@@ -7,10 +7,9 @@
 */
 #include <string>
 
-using namespace std;
+#include "command.hpp"
 
-// @brief using this type def to can pass function pointers
-typedef int (*function_pointer)();
+using namespace std;
 
 function_pointer getCommandFunction(string command) {
 
