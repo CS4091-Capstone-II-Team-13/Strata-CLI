@@ -6,6 +6,7 @@ using namespace std;
 void Parser::parse() {
     parseFlag();
     parseCommand();
+    parseFlag();
 
     // the remainder of the arguments will be passed forward
     args = deque<string>(inputs);
