@@ -10,19 +10,27 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <deque>
 
-#include "include/parser.hpp"
+#include "include/parser.h"
+#include "include/utils.h"
 
 using namespace std;
 
 int main(int argc, char *argv[]){
 
-    // package arguments into a vector
-    vector<string> arguments(argv, argv + argc);
+    // package arguments into a queue
+    deque<string> arguments(argv, argv + argc);
 
     // parse input arguments
     Parser parser(arguments);
-    parser.parse();
+
+    try{
+        parser.parse();
+    } catch (const char* msg) {
+        cout << msg << endl;
+    }
+
 
     
 
