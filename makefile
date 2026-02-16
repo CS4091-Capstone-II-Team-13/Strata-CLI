@@ -3,10 +3,11 @@
 
 CC := "g++"
 APP_NAME := "strata"
+INCLUDE_PATH := "include"
 
-build:
-	$(CC) src/main.cpp -o bins/linux/$(APP_NAME)
-	$(CC) -Wall src/main.cpp -o bins/windows/$(APP_NAME).exe
+build: src/*.cpp src/*/*.cpp
+	$(CC) -I $(INCLUDE_PATH) $^ -o bins/linux/$(APP_NAME)
+	$(CC) -Wall -I $(INCLUDE_PATH) $^ -o bins/windows/$(APP_NAME).exe
 
 install: build
 	@echo "Installing . . ."
