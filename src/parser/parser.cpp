@@ -4,7 +4,8 @@
 using namespace std;
 
 void Parser::parse() {
-    parseFlag();
+    if (!parseFlag()) return;
+    
     parseCommand();
     parseFlag();
 
@@ -12,22 +13,25 @@ void Parser::parse() {
     args = deque<string>(inputs);
 }
 
-void Parser::parseFlag() {
+// @brief parses a flag token
+// @return true: flag requires other arguments
+// @return false: flag doesn't require other arguments
+bool Parser::parseFlag() {
     if (inputs[0][0] == '-') {
         flags.push_back(inputs[0]);
+
+        if (commandFlagSet.find(inputs[0]) != commandFlagSet.end()){
+            return false;
+        }
+
         inputs.pop_front();
         parseFlag();
-        return;
+        return true;
     }
 }
 
-set<string> commands = {
-    "pull",
-    "push",
-};
-
 void Parser::parseCommand() {
-    if(commands.find(inputs[0]) != commands.end()) {
+    if(commandSet.find(inputs[0]) != commandSet.end()) {
         command = inputs[0];
         inputs.pop_front();
         return;

@@ -9,6 +9,9 @@ build: src/*.cpp src/*/*.cpp
 	$(CC) -I $(INCLUDE_PATH) $^ -o bins/linux/$(APP_NAME)
 	$(CC) -Wall -I $(INCLUDE_PATH) $^ -o bins/windows/$(APP_NAME).exe
 
+debug:  src/*.cpp src/*/*.cpp
+	$(CC) -g -I $(INCLUDE_PATH) $^ -o bins/debug/$(APP_NAME)
+
 install: build
 	@echo "Installing . . ."
 	install -m 0755 bins/linux/$(APP_NAME) /usr/local/bin

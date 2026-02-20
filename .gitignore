@@ -1,3 +1,5 @@
 bins/linux/*
 bins/windows/*
 bins/strata
+
+.vscode

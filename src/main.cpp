@@ -21,6 +21,9 @@ int main(int argc, char *argv[]){
     // package arguments into a queue
     deque<string> arguments(argv, argv + argc);
 
+    // remove the first argument, because that is the execution path
+    arguments.pop_front();
+
     // parse input arguments
     Parser parser(arguments);
 
@@ -29,6 +32,8 @@ int main(int argc, char *argv[]){
     } catch (const char* msg) {
         cout << msg << endl;
     }
+
+    
 
 
     

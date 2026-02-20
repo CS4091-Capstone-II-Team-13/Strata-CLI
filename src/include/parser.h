@@ -3,6 +3,7 @@
 #include <string>
 #include <deque> 
 #include <vector>
+#include <set>
 
 using namespace std;
 
@@ -24,6 +25,23 @@ class Parser {
         void parse();
 
     private:
-        void parseFlag();
+        bool parseFlag();
         void parseCommand();
+
+        // matches to these 2 sets for commands and flags
+        set<string> commandSet = {
+            "pull", "push",
+        };
+
+        set<string> flagSet = {
+            "-h", "-H", "--help",
+            "-v", "-V", "--version",
+        };
+
+        // flags that don't need any other arguments
+        set<string> commandFlagSet = {
+            "-h", "-H", "--help",
+            "-v", "-V", "--version",
+        };
+
 };
