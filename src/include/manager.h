@@ -1,11 +1,15 @@
 #pragma once
 
-#include <vector>
+#include <deque>
+#include <string>
 
-// @breif The purpose of this class is to act as an abstract class for
-//        other managers to be derived from.
-//        Derived managers should implement relevent functions and the doCommand() function
-class Manager {
+using namespace std;
+
+class CommandFlagManager {
     public:
-        void doCommand();
+        void help();
+        void version();
+
+    private: 
+        string flag;
 };

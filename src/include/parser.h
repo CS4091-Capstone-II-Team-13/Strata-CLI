@@ -2,7 +2,6 @@
 
 #include <string>
 #include <deque> 
-#include <vector>
 #include <set>
 
 using namespace std;
@@ -17,7 +16,7 @@ class Parser {
         deque<string> inputs;
 
         // outputs
-        vector<string> flags;
+        deque<string> flags;
         string command;
         deque<string> args; // all remaining inputs will end up as args
 
