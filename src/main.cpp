@@ -8,11 +8,13 @@
 
 #include <iostream>
 #include <string>
-#include <vector>
 #include <deque>
+#include <memory>
 
 #include "include/parser.h"
 #include "include/utils.h"
+#include "include/manager.h"
+#include "include/context.h"
 
 using namespace std;
 
@@ -32,9 +34,10 @@ int main(int argc, char *argv[]){
     } catch (const char* msg) {
         cout << msg << endl;
     }
-
     
 
+
+    print_items(parser.flags);
 
     
 
