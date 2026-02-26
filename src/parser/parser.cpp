@@ -27,6 +27,8 @@ bool Parser::parseFlag() {
         parseFlag();
         return true;
     }
+    // throw err
+    throw "Invalid Flag";
 }
 
 void Parser::parseCommand() {

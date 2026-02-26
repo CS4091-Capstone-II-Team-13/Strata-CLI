@@ -35,8 +35,16 @@ int main(int argc, char *argv[]){
         cout << msg << endl;
     }
     
+    // package managers into a vector
+    vector<unique_ptr<Manager>> managers;
+    managers.emplace_back(make_unique<CommandFlagManager>());   // use emplace_back to prevent weird pointer problems
+    // Add new managers here //
 
-    
+    // create context from parsed data
+    Context context(move(managers), parser.flags, parser.command, parser.args);    // since these are unique pointers, we must use move() to transfer ownership
+
+    // execute
+    context.execute();
 
     return 1;
 }
