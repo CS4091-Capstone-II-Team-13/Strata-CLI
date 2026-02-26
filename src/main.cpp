@@ -36,9 +36,6 @@ int main(int argc, char *argv[]){
     }
     
 
-
-    print_items(parser.flags);
-
     
 
     return 1;

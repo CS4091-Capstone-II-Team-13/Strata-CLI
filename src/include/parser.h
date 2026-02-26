@@ -27,6 +27,8 @@ class Parser {
         bool parseFlag();
         void parseCommand();
 
+        // TODO: implement a method to modify/add these sets because its duplicating code in manager.h
+
         // matches to these 2 sets for commands and flags
         set<string> commandSet = {
             "pull", "push",

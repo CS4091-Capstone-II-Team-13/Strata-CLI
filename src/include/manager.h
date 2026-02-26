@@ -2,6 +2,8 @@
 
 #include <deque>
 #include <string>
+#include <unordered_map>
+#include <functional>
 
 using namespace std;
 
@@ -21,4 +23,16 @@ class CommandFlagManager : public Manager {
 
     private: 
         string flag;
+        unordered_map<string, function<void()>> Actions = {     // be sure to use bind() to bind function pointers with this class
+            {"--help", bind(help, this)},
+            {"--version", bind(version, this)},
+        };
+
+        // @brief sets aliases for every Action
+        // ex: -h -> --help
+        //     -v -> --version
+        unordered_map<string, string> aliases = {
+            {"-h", "--help"},
+            {"-v", "--version"}
+        };
 };
