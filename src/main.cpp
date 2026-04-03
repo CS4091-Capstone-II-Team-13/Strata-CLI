@@ -31,20 +31,29 @@ int main(int argc, char *argv[]){
 
     try{
         parser.parse();
-    } catch (const char* msg) {
-        cout << msg << endl;
+    } catch (const exception& e) {
+        cout << "Parse Error: " << endl;
+        cout << e.what() << endl;
     }
     
     // package managers into a vector
     vector<unique_ptr<Manager>> managers;
     managers.emplace_back(make_unique<CommandFlagManager>());   // use emplace_back to prevent weird pointer problems
+    managers.emplace_back(make_unique<FileTrackingManager>());
+
+    managers.emplace_back(make_unique<ConfigManager>());
     // Add new managers here //
 
     // create context from parsed data
     Context context(move(managers), parser.flags, parser.command, parser.args);    // since these are unique pointers, we must use move() to transfer ownership
 
     // execute
-    context.execute();
+    try {
+        context.execute();
+    } catch (const exception& e) {
+        cout << "Context Erorr: " << endl;
+        cout << e.what() << endl;
+    }
 
     return 1;
 }

@@ -1,3 +1,4 @@
+#include <stdexcept>
 #include "../include/parser.h"
 
 using namespace std;
@@ -5,7 +6,16 @@ using namespace std;
 void Parser::parse() {
     if (!parseFlag()) return;
     
+    if(inputs.size() <= 0) {
+        throw runtime_error("Invalid Flag");
+    }
+
     parseCommand();
+
+    if(inputs.size() <= 0){
+        return;
+    }
+
     parseFlag();
 
     // the remainder of the arguments will be passed forward
@@ -15,7 +25,8 @@ void Parser::parse() {
 // @brief parses a flag token
 // @return true: flag requires other arguments
 // @return false: flag doesn't require other arguments
-bool Parser::parseFlag() {
+bool Parser:: parseFlag() {
+
     if (inputs[0][0] == '-') {
         flags.push_back(inputs[0]);
 
@@ -24,11 +35,16 @@ bool Parser::parseFlag() {
         }
 
         inputs.pop_front();
-        parseFlag();
-        return true;
+
+        // prevents error on multiple command flags
+        if(inputs.size() <= 0){
+            return true;
+        }
+
+        return parseFlag();
     }
-    // throw err
-    throw "Invalid Flag";
+
+    return true;
 }
 
 void Parser::parseCommand() {
@@ -37,6 +53,6 @@ void Parser::parseCommand() {
         inputs.pop_front();
         return;
     } else {
-        throw ("Incorrect Command Argument: " + inputs[0]);
+        throw runtime_error("Invalid Command: " + inputs[0]);
     }
 }

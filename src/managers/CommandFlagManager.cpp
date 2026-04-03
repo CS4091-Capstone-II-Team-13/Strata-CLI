@@ -3,10 +3,10 @@
 
 using namespace std;
 
-void CommandFlagManager::help() {
+void CommandFlagManager::help(deque<string> flags, deque<string> args) {
     cout << "HELP" << endl;
 }
 
-void CommandFlagManager::version() {
+void CommandFlagManager::version(deque<string> flags, deque<string> args) {
     cout << "VERSION" << endl;
 }
