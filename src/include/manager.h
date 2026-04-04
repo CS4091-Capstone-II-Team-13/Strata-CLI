@@ -38,7 +38,7 @@ class Manager {
 class CommandFlagManager : public Manager {
     public:
         CommandFlagManager() {
-            Actions = { // need to bind the functions to this class by doing [this](){}
+            Actions = { // need to bind the functions to this class by using a lambda expression [this](){}
                 {"--help",    [this](auto f, auto a) { help(f, a); }},
                 {"-h",        [this](auto f, auto a) { help(f, a); }},
                 {"--version", [this](auto f, auto a) { version(f, a); }},
