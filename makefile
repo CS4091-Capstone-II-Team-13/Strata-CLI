@@ -1,27 +1,42 @@
 .PHONY: clean
 .DEFAULT_GOAL := build
 
-CC := g++
+CC  := g++
+WCC := x86_64-w64-mingw32-g++
 APP_NAME := strata
-# local project includes
-INCLUDE_PATH := include
 
-# Node++ specific paths (tells the linker how to include <nodepp/nodepp.h>)
-NODEPP_PATH := libs/Nodepp/include
-NODEPP_LIB  := libs/Nodepp/lib
+# Include Paths
+INCLUDE_PATH := src/include
+LIB_PATH := libs
 
-# Compilation Flags: 
-CFLAGS := -O3 -Wall
+
+CFLAGS := -O3 -Wall -std=c++17
+
+# httplib needs ssl, crypto, and pthread
 LDFLAGS := -lssl -lcrypto -lz -lpthread
 
 build: src/*.cpp src/*/*.cpp
 	@mkdir -p bins/linux bins/windows
-	$(CC) $(CFLAGS) -I $(INCLUDE_PATH) -I $(NODEPP_PATH) $^ -o bins/linux/$(APP_NAME) $(LDFLAGS)
-	$(CC) $(CFLAGS) -I $(INCLUDE_PATH) -I $(NODEPP_PATH) $^ -o bins/windows/$(APP_NAME).exe $(LDFLAGS)
+	
+	@echo "Building Linux version..."
+	$(CC) $(CFLAGS) -I $(INCLUDE_PATH) -I $(LIB_PATH) $^ -o bins/linux/$(APP_NAME) $(LDFLAGS)
+	
+	@echo "Building Windows version..."
+	@if command -v $(WCC) > /dev/null; then \
+		$(WCC) $(CFLAGS) -I $(INCLUDE_PATH) -I $(LIB_PATH) $^ -o bins/windows/$(APP_NAME).exe $(LDFLAGS); \
+		echo "Windows build complete ✓"; \
+	else \
+		echo "----------------------------------------------------------"; \
+		echo "WARNING: Windows cross-compiler ($(WCC)) not found."; \
+		echo "To build for Windows on Debian/Ubuntu, run:"; \
+		echo "  sudo apt install g++-mingw-w64-x86-64"; \
+		echo "Skipping Windows build..."; \
+		echo "----------------------------------------------------------"; \
+	fi
 
 debug: src/*.cpp src/*/*.cpp
 	@mkdir -p bins/debug
-	$(CC) -g -I $(INCLUDE_PATH) -I $(NODEPP_PATH) $^ -o bins/debug/$(APP_NAME) $(LDFLAGS)
+	$(CC) -g -I $(INCLUDE_PATH) -I $(LIB_PATH) $^ -o bins/debug/$(APP_NAME) $(LDFLAGS)
 
 install: build
 	@echo "Installing . . ."

@@ -1,13 +1,25 @@
 #pragma once
 
-#include <nodepp/nodepp.h>
+#include <httplib.h>
 #include <string>
+#include <vector>
 
-namespace StrataAPI {
-    // Standard synchronous-looking wrappers for your Managers to call
-    void uploadBinary(const std::string& filepath);
-    void fetchRemoteConfig(const std::string& url);
+// tells httplib to use SSL
+#define CPPHTTPLIB_OPENSSL_SUPPORT
+
+class APIConnector {
+    public:
+    // Singleton access method
+    static APIConnector& getInstance();
+    APIConnector(const APIConnector&) = delete;
+    void operator=(const APIConnector&) = delete;
+
+    // API functions
     
-    // Internal: Starts the Node++ event loop if needed
-    void startEventLoop();
-}
+
+    private:
+        APIConnector();
+
+        httplib::Client cli;
+        std::string api_token = "YOUR_SECURE_TOKEN";
+};
