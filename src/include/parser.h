@@ -1,3 +1,8 @@
+/*
+*
+*   Purpose: Only holds the Parser class
+*
+*/
 #pragma once
 
 #include <string>
@@ -32,7 +37,7 @@ class Parser {
         // matches to these 2 sets for commands and flags
         set<string> commandSet = {
             "add", "restore", "pull", "push", "commit", "push", "pull",
-            "merge", "rebase", "branch", "stash", "config"
+            "merge", "rebase", "branch", "stash", "config", "init"
         };
 
         set<string> flagSet = {

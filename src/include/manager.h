@@ -1,3 +1,8 @@
+/*
+*
+*   Purpose: All managers live here
+*
+*/
 #pragma once
 
 #include <deque>
@@ -101,14 +106,17 @@ class CommitManager : public Manager {
 class RepositoryStructureManager : public Manager {
     public:
         RepositoryStructureManager() {
-            Actions = {};
-            triggers = {"merge", "rebase", "branch", "stash"};
+            Actions = {
+                {"init",    [this](auto f, auto a) { init(f, a); }},
+            };
+            triggers = {"merge", "rebase", "branch", "stash", "init"};
         }
 
         void merge(deque<string> flags, deque<string> args);
         void rebase(deque<string> flags, deque<string> args);
         void branch(deque<string> flags, deque<string> args);
         void stash(deque<string> flags, deque<string> args);
+        void init(deque<string> flags, deque<string> args);
 };
 
 // Handles all the "history" commands relevent to the history endpoints in the server api

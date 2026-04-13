@@ -40,7 +40,7 @@ int main(int argc, char *argv[]){
     vector<unique_ptr<Manager>> managers;
     managers.emplace_back(make_unique<CommandFlagManager>());   // use emplace_back to prevent weird pointer problems
     managers.emplace_back(make_unique<FileTrackingManager>());
-
+    managers.emplace_back(make_unique<RepositoryStructureManager>());
     managers.emplace_back(make_unique<ConfigManager>());
     // Add new managers here //
 

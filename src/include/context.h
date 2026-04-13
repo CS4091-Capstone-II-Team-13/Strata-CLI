@@ -1,3 +1,8 @@
+/*
+*
+*   Purpose: Holds the context, which manages all input context related actions (taking parsed input and choosing the correct actions)
+*
+*/
 #pragma once
 
 #include <deque>

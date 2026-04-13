@@ -13,26 +13,14 @@ LIB_PATH := libs
 CFLAGS := -O3 -Wall -std=c++17
 
 # httplib needs ssl, crypto, and pthread
-LDFLAGS := -lssl -lcrypto -lz -lpthread
+LDFLAGS := -lssl -lcrypto -lz -lpthread -lsqlite3
+
+INC_FLAGS := -I/usr/include -I$(INCLUDE_PATH) -I$(LIB_PATH)
 
 build: src/*.cpp src/*/*.cpp
 	@mkdir -p bins/linux bins/windows
-	
 	@echo "Building Linux version..."
-	$(CC) $(CFLAGS) -I $(INCLUDE_PATH) -I $(LIB_PATH) $^ -o bins/linux/$(APP_NAME) $(LDFLAGS)
-	
-	@echo "Building Windows version..."
-	@if command -v $(WCC) > /dev/null; then \
-		$(WCC) $(CFLAGS) -I $(INCLUDE_PATH) -I $(LIB_PATH) $^ -o bins/windows/$(APP_NAME).exe $(LDFLAGS); \
-		echo "Windows build complete ✓"; \
-	else \
-		echo "----------------------------------------------------------"; \
-		echo "WARNING: Windows cross-compiler ($(WCC)) not found."; \
-		echo "To build for Windows on Debian/Ubuntu, run:"; \
-		echo "  sudo apt install g++-mingw-w64-x86-64"; \
-		echo "Skipping Windows build..."; \
-		echo "----------------------------------------------------------"; \
-	fi
+	$(CC) $(CFLAGS) $(INC_FLAGS) $^ -o bins/linux/$(APP_NAME) $(LDFLAGS)
 
 debug: src/*.cpp src/*/*.cpp
 	@mkdir -p bins/debug
