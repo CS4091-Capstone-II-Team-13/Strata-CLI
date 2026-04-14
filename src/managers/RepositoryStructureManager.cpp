@@ -24,9 +24,8 @@ void RepositoryStructureManager::stash(deque<string> flags, deque<string> args){
 }
 
 void RepositoryStructureManager::init(deque<string> flags, deque<string> args) {
-    RepositoryManager& repoMan = RepositoryManager::getInstance();
+    Repository& repo = Repository::getInstance();
 
     string projectRoot = fs::current_path();
-    repoMan.init(projectRoot);
-
+    repo.init(projectRoot);
 }

@@ -54,6 +54,13 @@ namespace Queries {
             FOREIGN KEY (commit_id) REFERENCES commits(id)
         );
 
+        CREATE TABLE IF NOT EXISTS staging (
+            path         TEXT PRIMARY KEY, 
+            hash         TEXT NOT NULL,     -- The 'root' hash or tree hash
+            size_bytes   INTEGER NOT NULL,
+            last_modified INTEGER
+        );
+
         -- Indexes for fast lookup
         CREATE INDEX IF NOT EXISTS idx_file_path ON file_entries(path);
         CREATE INDEX IF NOT EXISTS idx_file_commit ON file_entries(commit_id);
@@ -62,5 +69,5 @@ namespace Queries {
 
     // Config Queries
 
-    // BLOB queries
+    
 }

@@ -1,6 +1,6 @@
 /*
 *
-*   Purpose: The RepositoryManager acts as a layer between the database and the command functions. 
+*   Purpose: The Repository acts as a layer between the database and the command functions. 
 *
 */
 
@@ -12,9 +12,9 @@
 
 using namespace std;
 
-class RepositoryManager {
+class Repository {
     public:
-    static RepositoryManager& getInstance();
+    static Repository& getInstance();
     
     // Initialize the DB file in .strata/
     bool init(const string& projectRoot);
@@ -28,7 +28,7 @@ class RepositoryManager {
     bool storeBlob(const string& hash, const vector<char>& data);
 
 private:
-    RepositoryManager() : db(nullptr) {}
+    Repository() : db(nullptr) {}
     sqlite3* db;
 
     bool initTables();

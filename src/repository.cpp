@@ -9,13 +9,13 @@ using namespace std;
 namespace fs = filesystem;
 namespace query = Queries;
 
-RepositoryManager& RepositoryManager::getInstance() {
-    static RepositoryManager instance;
+Repository& Repository::getInstance() {
+    static Repository instance;
     return instance;
 }
 
 // use canonical path for initializing the database
-bool RepositoryManager::init(const string& projectRoot) {
+bool Repository::init(const string& projectRoot) {
     try {
         // paths
         fs::path rootPath = fs::absolute(projectRoot);
@@ -60,7 +60,7 @@ bool RepositoryManager::init(const string& projectRoot) {
     }
 }
 
-bool RepositoryManager::initTables() {
+bool Repository::initTables() {
     char* zErrMsg = nullptr;
 
     int rc = sqlite3_exec(db, query::SQL_SCHEMA_INIT.c_str(), nullptr, nullptr, &zErrMsg);

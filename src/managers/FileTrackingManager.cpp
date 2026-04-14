@@ -4,7 +4,7 @@
 using namespace std;
 
 void FileTrackingManager::add(deque<string> flags, deque<string> args) {
-    cout << "ADD" << endl;
+    
 }
 
 void FileTrackingManager::restore(deque<string> flags, deque<string> args) {
