@@ -14,22 +14,29 @@ using namespace std;
 
 class Repository {
     public:
-    static Repository& getInstance();
+        static Repository& getInstance();
+        
+        // Initialize the DB file in .strata/
+        bool init(const string& projectRoot);
+        
+        // Generic execution for INSERT/UPDATE
+        bool execute(const string& sql);
+
+        bool setConfig(const string& key, const string& value);
+        string getConfig(const string& key);
+
+        bool stageFile(const string& path, const string& hash, uintmax_t size);
     
-    // Initialize the DB file in .strata/
-    bool init(const string& projectRoot);
-    
-    // Generic execution for INSERT/UPDATE
-    bool execute(const string& sql);
 
-    bool setConfig(const string& key, const string& value);
-    string getConfig(const string& key);
+    private:
+        Repository();
+        ~Repository() {
+            if (db) {
+                sqlite3_close(db);
+                db = nullptr;
+            }
+        }
 
-    bool storeBlob(const string& hash, const vector<char>& data);
-
-private:
-    Repository() : db(nullptr) {}
-    sqlite3* db;
-
-    bool initTables();
+        sqlite3* db;
+        bool initTables();
 };

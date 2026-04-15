@@ -37,7 +37,7 @@ class Parser {
         // matches to these 2 sets for commands and flags
         set<string> commandSet = {
             "add", "restore", "pull", "push", "commit", "push", "pull",
-            "merge", "rebase", "branch", "stash", "config", "init"
+            "merge", "rebase", "branch", "stash", "config", "init", "status"
         };
 
         set<string> flagSet = {
