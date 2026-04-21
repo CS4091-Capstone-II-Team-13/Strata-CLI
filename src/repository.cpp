@@ -135,3 +135,50 @@ bool Repository::stageFile(const string& path, const string& hash, uintmax_t siz
 
     return true;
 }
+
+bool Repository::unstageFile(string filePath) {
+    sqlite3_stmt* stmt;
+    const char* sql = "DELETE FROM staging WHERE path = ?;";
+
+    // Prepare the statement
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK) {
+        return false; 
+    }
+
+    // Bind the file path to the '?' placeholder to prevent SQL injection
+    sqlite3_bind_text(stmt, 1, filePath.c_str(), -1, SQLITE_STATIC);
+
+    // Execute the statement
+    int rc = sqlite3_step(stmt);
+    
+    // Clean up
+    sqlite3_finalize(stmt);
+
+    // Return true if the execution finished successfully
+    return (rc == SQLITE_DONE);
+}
+
+vector<string> Repository::getStagedFiles() {
+    vector<std::string> files;
+    sqlite3_stmt* stmt;
+    const char* sql = "SELECT path FROM staging;";
+
+    // Prepare the SQL statement
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK) {
+        return files; 
+    }
+
+    // Iterate through the result rows
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        // Retrieve the text from the first column (filepath)
+        const unsigned char* text = sqlite3_column_text(stmt, 0);
+        if (text != nullptr) {
+            files.push_back(std::string(reinterpret_cast<const char*>(text)));
+        }
+    }
+
+    // release memory
+    sqlite3_finalize(stmt);
+
+    return files;
+}

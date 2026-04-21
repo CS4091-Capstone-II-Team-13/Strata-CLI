@@ -18,14 +18,15 @@ class Repository {
         
         // Initialize the DB file in .strata/
         bool init(const string& projectRoot);
-        
-        // Generic execution for INSERT/UPDATE
-        bool execute(const string& sql);
 
+        // repo config
         bool setConfig(const string& key, const string& value);
         string getConfig(const string& key);
 
+        // file staging
         bool stageFile(const string& path, const string& hash, uintmax_t size);
+        bool unstageFile(string filePath);
+        vector<string> getStagedFiles();
     
 
     private:

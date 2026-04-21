@@ -50,13 +50,36 @@ void FileTrackingManager::add(deque<string> flags, deque<string> args) {
     
 }
 
+// Assume that args[0] is a pattern to match to filenames
 void FileTrackingManager::restore(deque<string> flags, deque<string> args) {
-    cout << "RESTORE" << endl;
+    Repository& repo = Repository::getInstance();
+
+    // check for invalid arguments
+    if(args.empty()){
+        cerr << "No Filepath given" << endl;
+        return;
+    }
+
+    // set the . to a klein star for pattern matching-
+    string pattern = args[0];
+    if(pattern == "."){
+        pattern = '*';
+    }
+
+    // scan for all files that could match the pattern
+    fs::path repoRoot = find_repository_root();
+    vector<fs::path> filenames = scan_repo_files(repoRoot, pattern);
+
+    // unstage all of the matches
+    for( auto file : filenames){
+        repo.unstageFile(file);
+    }
 }
 
 void FileTrackingManager::status(deque<string> flags, deque<string> args) {
     fs::path repoRoot = find_repository_root();
     vector<fs::path> filenames = scan_repo_files(repoRoot, "*");
+    Repository& repo = Repository::getInstance();
 
     // print out information about the project (repo info) (branch, name, ...)
     cout << "Project: " << "<Project name>" << endl;
@@ -66,6 +89,11 @@ void FileTrackingManager::status(deque<string> flags, deque<string> args) {
     
     // print out files in staging
     cout << "Changes to be committed:" << endl << "\t(use \"strata restore <file>\" to unstage)" << endl;
+
+    vector<string> filePaths = repo.getStagedFiles();
+    for( auto file : filePaths) {
+        cout << file << endl;
+    }
 
     cout << endl;
 
