@@ -1,8 +1,9 @@
 /*
-*
-*   Purpose: A namespace which holds all standard const queries that are exclusively used by the RepositoryManager
-*
-*/
+ *
+ *   Purpose: A namespace which holds all standard const queries that are
+ * exclusively used by the RepositoryManager
+ *
+ */
 
 #pragma once
 
@@ -11,7 +12,7 @@
 using namespace std;
 
 namespace Queries {
-    const string SQL_SCHEMA_INIT = R"(
+const string SQL_SCHEMA_INIT = R"(
         CREATE TABLE IF NOT EXISTS config (
             key   TEXT PRIMARY KEY, 
             value TEXT
@@ -67,7 +68,6 @@ namespace Queries {
         CREATE INDEX IF NOT EXISTS idx_commit_project ON commits(project_id);
     )";
 
-    // Config Queries
+// Config Queries
 
-    
-}
+} // namespace Queries

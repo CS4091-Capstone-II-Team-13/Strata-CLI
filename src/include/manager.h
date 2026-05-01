@@ -1,41 +1,47 @@
 /*
-*
-*   Purpose: All managers live here
-*
-*/
+ *
+ *   Purpose: All managers live here
+ *
+ */
 #pragma once
 
 #include <deque>
-#include <string>
-#include <unordered_map>
 #include <functional>
 #include <set>
+#include <string>
+#include <unordered_map>
 
 using namespace std;
 
 // @brief The purpose of this class is to act as an abstract class for
 //        other managers to be derived from.
-//        Derived managers should implement relevent functions, actions, and triggers
-//        
-// NOTE:  All implemented functions must accept arguments in the form of (deque<string> flags, deque<string> args)
+//        Derived managers should implement relevent functions, actions, and
+//        triggers
+//
+// NOTE:  All implemented functions must accept arguments in the form of
+// (deque<string> flags, deque<string> args)
 class Manager {
     public:
         virtual ~Manager() = default;
 
-        virtual unordered_map<string, function<void(deque<string>, deque<string>)>> get_actions() {
+        virtual unordered_map<string,
+                              function<void(deque<string>, deque<string>)>>
+        get_actions() {
             return Actions;
         }
 
-        virtual set<string> get_triggers() {
-            return triggers;
-        }
+        virtual set<string> get_triggers() { return triggers; }
 
-    protected: 
-        // This unordered_map simply maps triggers to actions, so that the context can grab the right function
-        unordered_map<string, function<void(deque<string>, deque<string>)>> Actions;
+    protected:
+        // This unordered_map simply maps triggers to actions, so that the
+        // context can grab the right function
+        unordered_map<string, function<void(deque<string>, deque<string>)>>
+            Actions;
 
-        // the purpose of this set of triggers is to trigger the correct manager, searching a set is much faster than searching the unordered_map
-        set<string> triggers = {};  
+        // the purpose of this set of triggers is to trigger the correct
+        // manager, searching a set is much faster than searching the
+        // unordered_map
+        set<string> triggers = {};
 };
 
 // @brief Implements all commands relevent to flags
@@ -43,12 +49,12 @@ class Manager {
 class CommandFlagManager : public Manager {
     public:
         CommandFlagManager() {
-            Actions = { // need to bind the functions to this class by using a lambda expression [this](){}
-                {"--help",    [this](auto f, auto a) { help(f, a); }},
-                {"-h",        [this](auto f, auto a) { help(f, a); }},
-                {"--version", [this](auto f, auto a) { version(f, a); }},
-                {"-v",        [this](auto f, auto a) { version(f, a); }}
-            };
+            Actions = {// need to bind the functions to this class by using a
+                       // lambda expression [this](){}
+                       {"--help", [this](auto f, auto a) { help(f, a); }},
+                       {"-h", [this](auto f, auto a) { help(f, a); }},
+                       {"--version", [this](auto f, auto a) { version(f, a); }},
+                       {"-v", [this](auto f, auto a) { version(f, a); }}};
 
             triggers = {"--help", "-h", "--version", "-v"};
         }
@@ -61,9 +67,9 @@ class FileTrackingManager : public Manager {
     public:
         FileTrackingManager() {
             Actions = {
-                {"add",    [this](auto f, auto a) { add(f, a); }},
-                {"restore",    [this](auto f, auto a) { restore(f, a); }},
-                {"status",    [this](auto f, auto a) { status(f, a); }},
+                {"add", [this](auto f, auto a) { add(f, a); }},
+                {"restore", [this](auto f, auto a) { restore(f, a); }},
+                {"status", [this](auto f, auto a) { status(f, a); }},
             };
             triggers = {"add", "restore", "status"};
         }
@@ -77,7 +83,7 @@ class ConfigManager : public Manager {
     public:
         ConfigManager() {
             Actions = {
-                {"config",    [this](auto f, auto a) { config(f, a); }},
+                {"config", [this](auto f, auto a) { config(f, a); }},
             };
             triggers = {"config"};
         }
@@ -102,12 +108,13 @@ class CommitManager : public Manager {
         void pull(deque<string> flags, deque<string> args);
 };
 
-// Handles any command relevent to the structure of the repository: "merge", "rebase", "branch", "stash"
+// Handles any command relevent to the structure of the repository: "merge",
+// "rebase", "branch", "stash"
 class RepositoryStructureManager : public Manager {
     public:
         RepositoryStructureManager() {
             Actions = {
-                {"init",    [this](auto f, auto a) { init(f, a); }},
+                {"init", [this](auto f, auto a) { init(f, a); }},
             };
             triggers = {"merge", "rebase", "branch", "stash", "init"};
         }
@@ -119,7 +126,8 @@ class RepositoryStructureManager : public Manager {
         void init(deque<string> flags, deque<string> args);
 };
 
-// Handles all the "history" commands relevent to the history endpoints in the server api
+// Handles all the "history" commands relevent to the history endpoints in the
+// server api
 class HistoryManager : public Manager {
     public:
         HistoryManager() {
@@ -128,16 +136,16 @@ class HistoryManager : public Manager {
         }
 };
 
-// Handles all "project" commands relevent to the history endpoints in the server api "POST/GET/DELETE /projects"
+// Handles all "project" commands relevent to the history endpoints in the
+// server api "POST/GET/DELETE /projects"
 class ProjectManager : public Manager {
     public:
         ProjectManager() {
             Actions = {};
             triggers = {"create", "projects", "delete-project"};
         }
-        
+
         void create(deque<string> flags, deque<string> args);
         void projects(deque<string> flags, deque<string> args);
         void delete_project(deque<string> flags, deque<string> args);
-
 };

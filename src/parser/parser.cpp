@@ -1,18 +1,19 @@
-#include <stdexcept>
 #include "../include/parser.h"
+#include <stdexcept>
 
 using namespace std;
 
 void Parser::parse() {
-    if (!parseFlag()) return;
-    
-    if(inputs.size() <= 0) {
+    if (!parseFlag())
+        return;
+
+    if (inputs.size() <= 0) {
         throw runtime_error("Invalid Flag");
     }
 
     parseCommand();
 
-    if(inputs.size() <= 0){
+    if (inputs.size() <= 0) {
         return;
     }
 
@@ -25,19 +26,19 @@ void Parser::parse() {
 // @brief parses a flag token
 // @return true: flag requires other arguments
 // @return false: flag doesn't require other arguments
-bool Parser:: parseFlag() {
+bool Parser::parseFlag() {
 
     if (inputs[0][0] == '-') {
         flags.push_back(inputs[0]);
 
-        if (commandFlagSet.find(inputs[0]) != commandFlagSet.end()){
+        if (commandFlagSet.find(inputs[0]) != commandFlagSet.end()) {
             return false;
         }
 
         inputs.pop_front();
 
         // prevents error on multiple command flags
-        if(inputs.size() <= 0){
+        if (inputs.size() <= 0) {
             return true;
         }
 
@@ -48,7 +49,7 @@ bool Parser:: parseFlag() {
 }
 
 void Parser::parseCommand() {
-    if(commandSet.find(inputs[0]) != commandSet.end()) {
+    if (commandSet.find(inputs[0]) != commandSet.end()) {
         command = inputs[0];
         inputs.pop_front();
         return;

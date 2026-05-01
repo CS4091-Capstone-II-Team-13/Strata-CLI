@@ -1,6 +1,3 @@
-bins/linux/*
-bins/windows/*
-bins/strata
-
+bin/
 .strata/
 .vscode/

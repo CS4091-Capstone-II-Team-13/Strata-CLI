@@ -2,15 +2,15 @@
 #include "include/queries.h"
 #include "include/utils.h"
 #include <filesystem>
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <sstream>
 
 using namespace std;
 namespace fs = filesystem;
 namespace query = Queries;
 
-Repository& Repository::getInstance() {
+Repository &Repository::getInstance() {
     static Repository instance;
     return instance;
 }
@@ -18,7 +18,7 @@ Repository& Repository::getInstance() {
 Repository::Repository() {
     // Locate the repo root
     fs::path root = find_repository_root();
-    
+
     if (root.empty()) {
         db = nullptr; // We aren't inside a repo
         return;
@@ -31,7 +31,8 @@ Repository::Repository() {
     int rc = sqlite3_open(dbPath.c_str(), &db);
 
     if (rc != SQLITE_OK) {
-        std::cerr << "Strata Error: Cannot open database: " << sqlite3_errmsg(db) << std::endl;
+        std::cerr << "Strata Error: Cannot open database: "
+                  << sqlite3_errmsg(db) << std::endl;
         sqlite3_close(db);
         db = nullptr;
     } else {
@@ -41,7 +42,7 @@ Repository::Repository() {
 }
 
 // use canonical path for initializing the database
-bool Repository::init(const string& projectRoot) {
+bool Repository::init(const string &projectRoot) {
     try {
         // paths
         fs::path rootPath = fs::absolute(projectRoot);
@@ -51,7 +52,8 @@ bool Repository::init(const string& projectRoot) {
         // Create the .strata directory if it doesn't exist
         if (!fs::exists(strataPath)) {
             if (!fs::create_directories(strataPath)) {
-                cerr << "Repository Error: Failed to create directory " << strataPath << endl;
+                cerr << "Repository Error: Failed to create directory "
+                     << strataPath << endl;
                 return false;
             }
         }
@@ -61,35 +63,39 @@ bool Repository::init(const string& projectRoot) {
         int exit = sqlite3_open(dbFilePath.string().c_str(), &db);
 
         if (exit != SQLITE_OK) {
-            cerr << "Repository Error: Could not open repository database: " << sqlite3_errmsg(db) << endl;
+            cerr << "Repository Error: Could not open repository database: "
+                 << sqlite3_errmsg(db) << endl;
             return false;
         }
 
         // Enable Foreign Keys for this session
-        sqlite3_exec(db, "PRAGMA foreign_keys = ON;", nullptr, nullptr, nullptr);
+        sqlite3_exec(db, "PRAGMA foreign_keys = ON;", nullptr, nullptr,
+                     nullptr);
 
         // Initialize the schema
         if (!initTables()) {
-            cerr << "Repository Error: Failed to initialize database tables." << endl;
+            cerr << "Repository Error: Failed to initialize database tables."
+                 << endl;
             sqlite3_close(db);
             return false;
         }
-        
+
         return true;
 
-    } catch (const fs::filesystem_error& e) {
+    } catch (const fs::filesystem_error &e) {
         cerr << "Filesystem Error: " << e.what() << endl;
         return false;
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         cerr << "Error: " << e.what() << endl;
         return false;
     }
 }
 
 bool Repository::initTables() {
-    char* zErrMsg = nullptr;
+    char *zErrMsg = nullptr;
 
-    int rc = sqlite3_exec(db, query::SQL_SCHEMA_INIT.c_str(), nullptr, nullptr, &zErrMsg);
+    int rc = sqlite3_exec(db, query::SQL_SCHEMA_INIT.c_str(), nullptr, nullptr,
+                          &zErrMsg);
 
     if (rc != SQLITE_OK) {
         cerr << "SQL Initialization Error: " << zErrMsg << endl;
@@ -102,15 +108,17 @@ bool Repository::initTables() {
 
 // inserts the path, hash, and size of a file into the staging table
 // Returns true if the operation is successfull, returns false otherwise
-bool Repository::stageFile(const string& path, const string& hash, uintmax_t size) {
+bool Repository::stageFile(const string &path, const string &hash,
+                           uintmax_t size) {
     // create sql statement
     // INSERT OR REPLACE based on path to prevent duplication
-    const char* sql = "INSERT OR REPLACE INTO staging (path, hash, size_bytes, last_modified) "
+    const char *sql = "INSERT OR REPLACE INTO staging (path, hash, size_bytes, "
+                      "last_modified) "
                       "VALUES (?, ?, ?, CURRENT_TIMESTAMP);";
-    
-    sqlite3_stmt* stmt;
-    
-    // Prepare the sql statement in the sqlite engine 
+
+    sqlite3_stmt *stmt;
+
+    // Prepare the sql statement in the sqlite engine
     if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
         cerr << "Repository Error: " << sqlite3_errmsg(db) << endl;
         return false;
@@ -137,12 +145,12 @@ bool Repository::stageFile(const string& path, const string& hash, uintmax_t siz
 }
 
 bool Repository::unstageFile(string filePath) {
-    sqlite3_stmt* stmt;
-    const char* sql = "DELETE FROM staging WHERE path = ?;";
+    sqlite3_stmt *stmt;
+    const char *sql = "DELETE FROM staging WHERE path = ?;";
 
     // Prepare the statement
     if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK) {
-        return false; 
+        return false;
     }
 
     // Bind the file path to the '?' placeholder to prevent SQL injection
@@ -150,7 +158,7 @@ bool Repository::unstageFile(string filePath) {
 
     // Execute the statement
     int rc = sqlite3_step(stmt);
-    
+
     // Clean up
     sqlite3_finalize(stmt);
 
@@ -160,20 +168,20 @@ bool Repository::unstageFile(string filePath) {
 
 vector<string> Repository::getStagedFiles() {
     vector<std::string> files;
-    sqlite3_stmt* stmt;
-    const char* sql = "SELECT path FROM staging;";
+    sqlite3_stmt *stmt;
+    const char *sql = "SELECT path FROM staging;";
 
     // Prepare the SQL statement
     if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK) {
-        return files; 
+        return files;
     }
 
     // Iterate through the result rows
     while (sqlite3_step(stmt) == SQLITE_ROW) {
         // Retrieve the text from the first column (filepath)
-        const unsigned char* text = sqlite3_column_text(stmt, 0);
+        const unsigned char *text = sqlite3_column_text(stmt, 0);
         if (text != nullptr) {
-            files.push_back(std::string(reinterpret_cast<const char*>(text)));
+            files.push_back(std::string(reinterpret_cast<const char *>(text)));
         }
     }
 
