@@ -1,6 +1,6 @@
-#include "include/repository.h"
-#include "include/queries.h"
-#include "include/utils.h"
+#include "repository.h"
+#include "queries.h"
+#include "utils.h"
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -89,6 +89,71 @@ bool Repository::init(const string &projectRoot) {
         cerr << "Error: " << e.what() << endl;
         return false;
     }
+}
+
+bool Repository::setConfig(const string &key, const string &value) {
+    const char *sql =
+        "INSERT OR REPLACE INTO config (key, value) VALUES (?, ?)";
+    sqlite3_stmt *stmt;
+
+    // Prepare the sql statement in the sqlite engine
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+        cerr << "Repository Error: " << sqlite3_errmsg(db) << endl;
+        return false;
+    }
+
+    sqlite3_bind_text(stmt, 1, key.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 2, value.c_str(), -1, SQLITE_TRANSIENT);
+
+    // Execute the sql statement
+    int rc = sqlite3_step(stmt);
+
+    // Clean up the statement memory
+    sqlite3_finalize(stmt);
+
+    if (rc != SQLITE_DONE) {
+        cerr << "Repository Error: " << sqlite3_errmsg(db) << endl;
+        return false;
+    }
+
+    return true;
+}
+
+string Repository::getConfig(const string &key) {
+    const char *sql = "SELECT value FROM config WHERE key=?";
+    sqlite3_stmt *stmt;
+
+    // Prepare the sql statement in the sqlite engine
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+        cerr << "Repository Error: " << sqlite3_errmsg(db) << endl;
+        return "";
+    }
+
+    sqlite3_bind_text(stmt, 1, key.c_str(), -1, SQLITE_TRANSIENT);
+
+    // Execute the sql statement
+    int rc = sqlite3_step(stmt);
+
+    // Clean up the statement memory
+    if (rc == SQLITE_DONE) {
+        cerr << "Repository Error: " << key << " not in config." << endl;
+        return "";
+    }
+
+    if (rc != SQLITE_ROW) {
+        cerr << "Repository Error: " << sqlite3_errmsg(db) << endl;
+        return "";
+    }
+
+    const unsigned char *text = sqlite3_column_text(stmt, 0);
+    if (text != nullptr) {
+        auto s = std::string(reinterpret_cast<const char *>(text));
+        sqlite3_finalize(stmt);
+        return s;
+    }
+
+    sqlite3_finalize(stmt);
+    return "";
 }
 
 bool Repository::initTables() {
@@ -189,4 +254,32 @@ vector<string> Repository::getStagedFiles() {
     sqlite3_finalize(stmt);
 
     return files;
+}
+
+strata::Client *Repository::getClient() {
+    if (client != nullptr)
+        return client;
+    string remote = getConfig("remote");
+    if (remote.length() == 0) {
+        cerr << "Cannot login. Configure with `strata config --remote <remote>`"
+             << endl;
+        throw runtime_error("Unconfigured");
+    }
+    string username = getConfig("username");
+    if (username.length() == 0) {
+        cerr << "Cannot login. Configure with `strata config --username "
+                "<username>`"
+             << endl;
+        throw runtime_error("Unconfigured");
+    }
+    string password = getConfig("password");
+    if (password.length() == 0) {
+        cerr << "Cannot login. Configure with `strata config --password "
+                "<password>`"
+             << endl;
+        throw runtime_error("Unconfigured");
+    }
+    client = new strata::Client(remote);
+    client->login(username, password);
+    return client;
 }

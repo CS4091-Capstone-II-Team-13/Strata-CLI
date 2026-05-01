@@ -1,4 +1,6 @@
-#include "../include/manager.h"
+#include "manager.h"
+#include "repository.h"
+
 #include <iostream>
 
 using namespace std;
@@ -14,7 +16,9 @@ void ConfigManager::config(deque<string> flags, deque<string> args) {
     }
 
     for (auto &flag : flags) {
-        if (flag == "--email") {
+        if (flag == "--remote") {
+            remote(args[0]);
+        } else if (flag == "--email") {
             email(args[0]);
         } else if (flag == "--password") {
             password(args[0]);
@@ -27,12 +31,18 @@ void ConfigManager::config(deque<string> flags, deque<string> args) {
 // TODO: add guide printouts that tell the user how to use config on errors
 // above
 
-void ConfigManager::email(string email) { cout << "Changing Email" << endl; }
+void ConfigManager::remote(string remote) {
+    Repository::getInstance().setConfig("remote", remote);
+}
 
-void ConfigManager::password(string pass) {
-    cout << "Changing Password" << endl;
+void ConfigManager::email(string email) {
+    Repository::getInstance().setConfig("email", email);
+}
+
+void ConfigManager::password(string password) {
+    Repository::getInstance().setConfig("password", password);
 }
 
 void ConfigManager::username(string username) {
-    cout << "Changing username" << endl;
+    Repository::getInstance().setConfig("username", username);
 }

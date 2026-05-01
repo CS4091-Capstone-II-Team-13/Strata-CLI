@@ -12,17 +12,15 @@ logic
 #include <memory>
 #include <string>
 
-#include "include/context.h"
-#include "include/manager.h"
-#include "include/parser.h"
-#include "include/utils.h"
-
-using namespace std;
+#include "context.h"
+#include "manager.h"
+#include "parser.h"
+#include "strata-middleware-linux-amd64/stratasdk.h"
+#include "utils.h"
 
 int main(int argc, char *argv[]) {
-
     // package arguments into a queue
-    deque<string> arguments(argv, argv + argc);
+    std::deque<std::string> arguments(argv, argv + argc);
 
     // remove the first argument, because that is the execution path
     arguments.pop_front();
@@ -33,18 +31,22 @@ int main(int argc, char *argv[]) {
     try {
         parser.parse();
     } catch (const exception &e) {
-        cout << "Parse Error: " << endl;
+        cout << "Parse Error: " << e.what() << endl;
         cout << e.what() << endl;
     }
 
     // package managers into a vector
-    vector<unique_ptr<Manager>> managers;
+    std::vector<std::unique_ptr<Manager>> managers;
     managers.emplace_back(
         make_unique<CommandFlagManager>()); // use emplace_back to prevent weird
                                             // pointer problems
     managers.emplace_back(make_unique<FileTrackingManager>());
     managers.emplace_back(make_unique<RepositoryStructureManager>());
     managers.emplace_back(make_unique<ConfigManager>());
+    managers.emplace_back(make_unique<CommitManager>());
+    managers.emplace_back(make_unique<RepositoryStructureManager>());
+    managers.emplace_back(make_unique<HistoryManager>());
+    managers.emplace_back(make_unique<ProjectManager>());
     // Add new managers here //
 
     // create context from parsed data
@@ -56,10 +58,8 @@ int main(int argc, char *argv[]) {
     try {
         context.execute();
     } catch (const exception &e) {
-        cout << "Context Erorr: " << endl;
-        cout << e.what() << endl;
+        std::cout << "Context Error: " << e.what() << endl;
+        return 1;
     }
-
-    return 1;
+    return 0;
 }
-

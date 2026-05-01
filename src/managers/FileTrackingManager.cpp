@@ -1,6 +1,6 @@
-#include "../include/manager.h"
-#include "../include/repository.h"
-#include "../include/utils.h"
+#include "manager.h"
+#include "repository.h"
+#include "utils.h"
 
 #include <filesystem>
 #include <iostream>

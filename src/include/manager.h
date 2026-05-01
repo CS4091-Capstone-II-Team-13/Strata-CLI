@@ -90,6 +90,7 @@ class ConfigManager : public Manager {
 
         void config(deque<string> flags, deque<string> args);
 
+        void remote(string remote);
         void email(string email);
         void password(string pass);
         void username(string username);
@@ -141,7 +142,12 @@ class HistoryManager : public Manager {
 class ProjectManager : public Manager {
     public:
         ProjectManager() {
-            Actions = {};
+            Actions = {
+                {"create", [this](auto f, auto a) { create(f, a); }},
+                {"projects", [this](auto f, auto a) { projects(f, a); }},
+                {"delete-project",
+                 [this](auto f, auto a) { delete_project(f, a); }},
+            };
             triggers = {"create", "projects", "delete-project"};
         }
 

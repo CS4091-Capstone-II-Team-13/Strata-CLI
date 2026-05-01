@@ -1,5 +1,5 @@
-#include "../include/manager.h"
-#include "../include/repository.h"
+#include "manager.h"
+#include "repository.h"
 #include <filesystem>
 #include <iostream>
 

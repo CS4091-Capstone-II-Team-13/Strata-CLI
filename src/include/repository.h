@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "strata-middleware-linux-amd64/stratasdk.h"
 #include <cstdint>
 #include <sqlite3.h>
 #include <string>
@@ -30,6 +31,8 @@ class Repository {
         bool unstageFile(string filePath);
         vector<string> getStagedFiles();
 
+        strata::Client *getClient();
+
     private:
         Repository();
         ~Repository() {
@@ -40,5 +43,7 @@ class Repository {
         }
 
         sqlite3 *db;
+        strata::Client *client;
+
         bool initTables();
 };
