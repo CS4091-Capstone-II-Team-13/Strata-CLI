@@ -4,6 +4,9 @@
 using namespace std;
 
 void Parser::parse() {
+    if (inputs.empty())
+        return;
+
     if (!parseFlag())
         return;
 
